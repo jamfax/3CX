@@ -1,0 +1,3 @@
+MAC,EXT,AUTH_ID,AUTH_PASSWORD,LABEL,SERVER,PORT,TRANSPORT
+0004f24aaaaa,201,auth.userId,AuthPassword,""207"",instance.3cx.com.au,5060,UDP              #/Note that the extension Label 207 has two sets of quotations 
+0004f24bbbbb,202,auth.userId,AuthPassword,"""James Smith""",instance.3cx.com.au,5060,UDP    #/Note that the named Label James Smith has three sets of quotations
