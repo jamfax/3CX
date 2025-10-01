@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PHONE_CONFIG>
+  <ALL
+    reg.1.address="201"
+    reg.1.auth.userId="abc123abc"
+    reg.1.auth.password="123abc123"
+    reg.1.label=""201""
+    reg.1.server.1.address="isntance.3cx.com.au"
+    reg.1.server.1.port="5060"
+    reg.1.server.1.transport="UDP"
+
+    voIpProt.server.1.address="instance.3cx.com.au"
+    voIpProt.server.1.port="5060"
+
+    msg.mwi.1.callBack="999"
+    msg.mwi.1.subscribe="999"
+    msg.mwi.1.callBackMode="contact"
+
+    tcpIpApp.sntp.address="pool.ntp.org"
+    tcpIpApp.sntp.gmtOffset="28800"
+    tcpIpApp.sntp.daylightSavings.enable="0"
+  />
+</PHONE_CONFIG>
