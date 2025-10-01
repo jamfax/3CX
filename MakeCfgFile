@@ -1,0 +1,124 @@
+param(
+  [Parameter(Mandatory=$true)]
+  [string]$CsvPath,
+
+  [Parameter(Mandatory=$true)]
+  [string]$OutDir,
+
+  [string]$Voicemail = "999",
+  [int]$GmtOffset = 28800,          # Perth = UTC+8
+  [switch]$WriteMaster              # also write 000000000000.cfg
+)
+
+# Ensure output folder exists
+New-Item -Type Directory -Force -Path $OutDir | Out-Null
+
+# Load CSV
+$rows = Import-Csv -Path $CsvPath
+
+# Basic validator (LABEL optional)
+$required = @('MAC','EXT','AUTH_ID','AUTH_PASSWORD','SERVER','PORT','TRANSPORT')
+$missingCols = $required | Where-Object { $_ -notin $rows[0].PsObject.Properties.Name }
+if ($missingCols) {
+  Write-Error "CSV missing columns: $($missingCols -join ', ')"
+  exit 1
+}
+# Ensure LABEL exists (optional)
+if ('LABEL' -notin $rows[0].PsObject.Properties.Name) {
+  # add empty LABEL property to each row
+  $rows | ForEach-Object { $_ | Add-Member -NotePropertyName LABEL -NotePropertyValue '' }
+}
+
+function New-PolycomPhoneCfg {
+  param(
+    [string]$Mac,
+    [string]$Ext,
+    [string]$AuthId,
+    [string]$AuthPassword,
+    [string]$Label,
+    [string]$Server,
+    [int]$Port,
+    [string]$Transport,
+    [int]$GmtOffset,
+    [string]$Voicemail
+  )
+@"
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<PHONE_CONFIG>
+  <ALL
+    reg.1.address="$Ext"
+    reg.1.auth.userId="$AuthId"
+    reg.1.auth.password="$AuthPassword"
+    reg.1.label="$Label"
+    reg.1.server.1.address="$Server"
+    reg.1.server.1.port="$Port"
+    reg.1.server.1.transport="$Transport"
+
+    voIpProt.server.1.address="$Server"
+    voIpProt.server.1.port="$Port"
+
+    msg.mwi.1.callBack="$Voicemail"
+    msg.mwi.1.subscribe="$Voicemail"
+    msg.mwi.1.callBackMode="contact"
+
+    tcpIpApp.sntp.address="pool.ntp.org"
+    tcpIpApp.sntp.gmtOffset="$GmtOffset"
+    tcpIpApp.sntp.daylightSavings.enable="0"
+  />
+</PHONE_CONFIG>
+"@
+}
+
+# Generate per-phone files
+$created = 0
+foreach ($r in $rows) {
+  # MAC: strip separators & uppercase
+  $mac = ($r.MAC -replace '[:\-\.]', '').ToUpper()
+  if ($mac -notmatch '^[0-9A-F]{12}$') {
+    Write-Warning "Skipping row with invalid MAC: $($r.MAC)"
+    continue
+  }
+
+  # Label default -> EXT if blank
+  $label = if ([string]::IsNullOrWhiteSpace($r.LABEL)) { $r.EXT } else { $r.LABEL }
+
+  # Port: strip non-digits, default 5060
+  $portStr = ($r.PORT | Out-String).Trim()
+  $portStr = ($portStr -replace '[^\d]', '')
+  if (-not [int]::TryParse($portStr, [ref]([int]$null))) { $port = 5060 } else { $port = [int]$portStr }
+
+  # Transport default
+  $transport = ($r.TRANSPORT | Out-String).Trim()
+  if ([string]::IsNullOrWhiteSpace($transport)) { $transport = 'UDP' }
+
+  $xml = New-PolycomPhoneCfg -Mac $mac `
+    -Ext $r.EXT -AuthId $r.AUTH_ID -AuthPassword $r.AUTH_PASSWORD `
+    -Label $label -Server $r.SERVER -Port $port -Transport $transport `
+    -GmtOffset $GmtOffset -Voicemail $Voicemail
+
+  $outFile = Join-Path $OutDir ("{0}_phone.cfg" -f $mac)
+  $xml | Set-Content -Path $outFile -Encoding UTF8
+  Write-Host "Wrote $outFile"
+  $created++
+}
+
+# Minimal master (optional)
+if ($WriteMaster) {
+  $master = @"
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<APPLICATION
+  CONFIG_FILES="[MACADDRESS]_phone.cfg"
+  APP_FILE_PATH=""
+  MISC_FILES=""
+  LOG_FILE_DIRECTORY=""
+  OVERRIDES_DIRECTORY=""
+  CONTACTS_DIRECTORY=""
+  LICENSE_DIRECTORY="">
+</APPLICATION>
+"@
+  $masterFile = Join-Path $OutDir "000000000000.cfg"
+  $master | Set-Content -Path $masterFile -Encoding UTF8
+  Write-Host "Wrote $masterFile"
+}
+
+Write-Host "`nDone. Created $created phone config file(s)."
