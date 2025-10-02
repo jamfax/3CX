@@ -37,21 +37,21 @@ Note: If a label contains spaces, wrap it in quotes. Example: "Staff Room".
 ⸻
 
 ### Example CSV (csvExample.csv)
-
-MAC,EXT,AUTH_ID,AUTH_PASSWORD,LABEL,SERVER,PORT,TRANSPORT
-0004F24EC2C4,220,220,SeCr3tP@ss,"James Smith",deez.3cx.com.au,5060,UDP
-0004F24F6F0F,221,221,AnotherPass,"John Sykes",deez.3cx.com.au,5060,UDP
+```MAC,EXT,AUTH_ID,AUTH_PASSWORD,LABEL,SERVER,PORT,TRANSPORT```
+```0004F24EC2C4,220,220,SeCr3tP@ss,"James Smith",deez.3cx.com.au,5060,UDP```
+```0004F24F6F0F,221,221,AnotherPass,"John Sykes",deez.3cx.com.au,5060,UDP```
 
 
 ⸻
 
 ## Usage
 
-.\Make-PolycomCfg.ps1 -CsvPath "C:\path\to\csvExample.csv" `
-  -OutDir "C:\ProgramData\3CX\Instance1\Data\Http\Interface\provisioning\<token>" `
-  -WriteMaster
+```.\Make-PolycomCfg.ps1 -CsvPath "C:\path\to\csvExample.csv" `
+  -OutDir "C:\ProgramData\3CX\Instance1\Data\Http\Interface\provisioning\<token>" 
+  -WriteMaster```
 
 Parameters
+
 	•	-CsvPath – Path to your input CSV
 	•	-OutDir – Destination folder for generated config files
 	•	-WriteMaster – Also creates the master 000000000000.cfg file
@@ -64,8 +64,8 @@ After running, each phone will have a matching <MAC>_phone.cfg file ready to ser
 
 This script outputs Polycom SoundPoint XML.
 If you need configs for other brands (e.g., Yealink, Fanvil, Snom):
-	1.	Export/download a working .cfg from an existing phone of that brand.
-	2.	Use its syntax/tags as the reference.
-	3.	Modify the New-PolycomPhoneCfg function in the script to emit that format instead.
+	```1.	Export/download a working .cfg from an existing phone of that brand.```
+	```2.	Use its syntax/tags as the reference.```
+	```3.	Modify the New-PolycomPhoneCfg function in the script to emit that format instead.```
 
 This lets you keep the same CSV structure while generating vendor-specific configuration files.
