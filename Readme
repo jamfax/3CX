@@ -39,8 +39,8 @@ Note: If a label contains spaces, wrap it in quotes. Example: "Staff Room".
 ### Example CSV (csvExample.csv)
 
 MAC,EXT,AUTH_ID,AUTH_PASSWORD,LABEL,SERVER,PORT,TRANSPORT
-0004F24EC2C4,220,220,SeCr3tP@ss,"Catherine Brunt",deez.3cx.com.au,5060,UDP
-0004F24F6F0F,221,221,AnotherPass,"Staff Room",deez.3cx.com.au,5060,UDP
+0004F24EC2C4,220,220,SeCr3tP@ss,"James Smith",deez.3cx.com.au,5060,UDP
+0004F24F6F0F,221,221,AnotherPass,"John Sykes",deez.3cx.com.au,5060,UDP
 
 
 ⸻
