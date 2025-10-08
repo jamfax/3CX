@@ -22,6 +22,7 @@ Open Powershell and run
 
 This will populate your provisioning folder with the cfg files as below. 
 -WriteMaster will write the 000000000000.cfg file that you require as a base if not using self hosted 3CX. If you are using self hosted method, don't use -WriteMaster.
+
 <img width="420" height="290" alt="image" src="https://github.com/user-attachments/assets/7d35f3f4-7d21-402b-bb20-ab05c1ef9ac9" />
 
 ## Step 3 - Start HTTP Server
@@ -32,6 +33,7 @@ Open Terminal
 	  •	python3 -m http.server 8000 --bind 0.0.0.0
 
 That folder will now be reachable with your device IP
+
 <img width="373" height="362" alt="image" src="https://github.com/user-attachments/assets/7fcb1b83-e155-439d-9a6e-abd19232dfc0" />
 
 ## Step 4 - Add provisioning url to phone
