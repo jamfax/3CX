@@ -69,3 +69,6 @@ If you need configs for other brands (e.g., Yealink, Fanvil, Snom):
 	3.	Modify the New-PolycomPhoneCfg function in the script to emit that format instead.
 
 This lets you keep the same CSV structure while generating vendor-specific configuration files.
+
+<img width="585" height="227" alt="image" src="https://github.com/user-attachments/assets/9cfb0053-c8ca-41a3-ad6f-358b55e078a6" />
+
